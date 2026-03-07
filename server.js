@@ -17,7 +17,7 @@ app.use(cors({
 }));
 
 // Pre-flight requests (OPTIONS) ko handle karne ke liye
-app.options('*', cors());
+app.options('(.*)', cors());
 
 app.use(express.json());
 
