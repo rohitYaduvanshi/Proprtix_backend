@@ -1,20 +1,14 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const { neon } = require('@neondatabase/serverless');
-const { drizzle } = require('drizzle-orm/neon-http');
-const { users } = require('./db/schema');
-const { eq } = require('drizzle-orm');
-
-// propertyRoutes ko yahan require kiya
-const propertyRoutes = require('./routes/propertyRoutes');
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
+import { neon } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-http';
+import { users } from './db/schema.js';
+import { eq } from 'drizzle-orm';
 
 const app = express();
 
-// Middleware
-app.use(express.json());
-
-// 1. IMPROVED CORS
+// 1. IMPROVED CORS: Network Error se bachne ke liye wildcard handle kiya hai
 app.use(cors({
   origin: ["https://propertix-0-1.vercel.app", "http://localhost:5173"], 
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -22,17 +16,16 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
 }));
 
-// Pre-flight requests
+// Pre-flight requests (OPTIONS) ko handle karne ke liye
 app.options('*', cors());
 
-// Routes
-app.use('/api/properties', propertyRoutes);
+app.use(express.json());
 
 // 2. Neon DB Connection
 const sql = neon(process.env.DATABASE_URL);
 const db = drizzle(sql);
 
-// 3. Health Check
+// 3. Health Check: Railway/Browser verification ke liye
 app.get('/', (req, res) => {
     res.status(200).send("Propertix Backend is Live and Healthy! 🚀");
 });
@@ -88,6 +81,7 @@ app.get('/api/auth/user/:address', async (req, res) => {
 
 // --- RAILWAY CONFIGURATION ---
 const PORT = process.env.PORT || 5000;
+// 0.0.0.0 par listen karna mandatory hai Railway ke liye
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`✅ Server successfully running on port ${PORT}`);
 });
