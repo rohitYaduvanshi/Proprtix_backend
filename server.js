@@ -6,6 +6,8 @@ import { drizzle } from 'drizzle-orm/neon-http';
 import { users } from './db/schema.js';
 import { eq } from 'drizzle-orm';
 
+const propertyRoutes = require('./routes/propertyRoutes');
+
 const app = express();
 
 // 1. IMPROVED CORS: Network Error se bachne ke liye wildcard handle kiya hai
@@ -15,6 +17,8 @@ app.use(cors({
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
 }));
+
+app.use('/api/properties', propertyRoutes);
 
 // Pre-flight requests (OPTIONS) ko handle karne ke liye
 app.options('*', cors());
