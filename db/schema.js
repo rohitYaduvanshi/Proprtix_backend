@@ -1,10 +1,13 @@
-import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+const { pgTable, serial, text, timestamp } = require("drizzle-orm/pg-core");
 
-export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  email: text("email").notNull(),
-  role: text("role").notNull(),
-  walletAddress: text("wallet_address").unique().notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
+// Schema definition using CommonJS
+const users = pgTable('users', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(),
+  email: text('email').notNull().unique(),
+  role: text('role').notNull(), // 'USER', 'GOVT_OFFICER', etc.
+  walletAddress: text('wallet_address').notNull().unique(),
+  createdAt: timestamp('created_at').defaultNow(),
 });
+
+module.exports = { users };
