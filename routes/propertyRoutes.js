@@ -1,12 +1,8 @@
 const express = require('express');
 const router = express.Router();
-// ERROR FIX: '../db' ki jagah '../db/schema' use karein
-const { users } = require('../db/schema'); 
-const { eq } = require('drizzle-orm');
 
-// Note: Kyunki 'db' server.js mein defined hai, humein routes mein 
-// DB instance ko handle karne ke liye thoda badlav karna hoga ya 
-// seedha export karna hoga. 
+const { users } = require('../db/schema');
+const { eq } = require('drizzle-orm');
 
 // 1. User ki saari properties lane ke liye (GET)
 router.get('/my-assets', async (req, res) => {
