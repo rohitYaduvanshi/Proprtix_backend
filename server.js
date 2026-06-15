@@ -8,9 +8,24 @@ import { eq } from 'drizzle-orm';
 
 const app = express();
 
-// 1. IMPROVED CORS: Network Error se bachne ke liye wildcard handle kiya hai
+// 1. CORS: All deployment origins allowed
+const allowedOrigins = [
+  "https://propertix-0-1.vercel.app",
+  "https://propertixx.netlify.app",
+  "https://propertix.netlify.app",
+  "http://localhost:5173",
+  "http://localhost:5174",
+];
+
 app.use(cors({
-  origin: ["https://propertix-0-1.vercel.app", "http://localhost:5173"], 
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, curl, Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    // Allow all netlify.app and vercel.app subdomains for preview deploys
+    if (origin.endsWith(".netlify.app") || origin.endsWith(".vercel.app")) return callback(null, true);
+    callback(new Error("Not allowed by CORS: " + origin));
+  },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
