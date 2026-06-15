@@ -79,6 +79,34 @@ app.get('/api/auth/user/:address', async (req, res) => {
   }
 });
 
+// 6. API: Update User Profile
+app.put('/api/auth/update-profile', async (req, res) => {
+  const { walletAddress, phone, bio, location } = req.body;
+  if (!walletAddress) {
+    return res.status(400).json({ success: false, message: "Wallet address is required" });
+  }
+
+  try {
+    const updatedUser = await db.update(users)
+      .set({
+        phone,
+        bio,
+        location
+      })
+      .where(eq(users.walletAddress, walletAddress.toLowerCase()))
+      .returning();
+
+    if (updatedUser.length === 0) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    res.json(updatedUser[0]);
+  } catch (err) {
+    console.error("Profile Update Error:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // --- RAILWAY CONFIGURATION ---
 const PORT = process.env.PORT || 5000;
 // 0.0.0.0 par listen karna mandatory hai Railway ke liye

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const { users } = require('../db/schema');
+
 const { eq } = require('drizzle-orm');
 
 // 1. User ki saari properties lane ke liye (GET)
