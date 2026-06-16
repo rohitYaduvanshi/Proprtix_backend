@@ -54,26 +54,31 @@ app.post('/api/auth/register', async (req, res) => {
   }
 
   try {
-    console.log("Attempting to register:", walletAddress);
+    console.log("Attempting to register/update:", walletAddress);
     
-    const newUser = await db.insert(users).values({
+    const savedUser = await db.insert(users).values({
       name,
       email,
       role,
       walletAddress: walletAddress.toLowerCase(),
-    }).returning();
+    })
+    .onConflictDoUpdate({
+      target: users.walletAddress,
+      set: { name, email, role }
+    })
+    .returning();
     
     res.status(201).json({ 
       success: true, 
       message: "Saved to Neon DB!", 
-      user: newUser[0] 
+      user: savedUser[0] 
     });
 
   } catch (err) {
     console.error("DB Error:", err);
     res.status(500).json({ 
       success: false, 
-      message: "Database error or User already exists",
+      message: "Database error",
       error: err.message 
     });
   }
