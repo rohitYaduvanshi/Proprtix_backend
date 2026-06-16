@@ -122,9 +122,14 @@ app.put('/api/auth/update-profile', async (req, res) => {
   }
 });
 
-// --- RAILWAY CONFIGURATION ---
-const PORT = process.env.PORT || 5000;
-// 0.0.0.0 par listen karna mandatory hai Railway ke liye
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`✅ Server successfully running on port ${PORT}`);
-});
+// --- VERCEL SERVERLESS EXPORT ---
+// Vercel pe: export default app (serverless)
+// Local dev pe: app.listen() chalata hai
+if (process.env.NODE_ENV !== 'production' || process.env.FORCE_LOCAL) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`✅ Propertix Backend running on http://localhost:${PORT}`);
+  });
+}
+
+export default app;
